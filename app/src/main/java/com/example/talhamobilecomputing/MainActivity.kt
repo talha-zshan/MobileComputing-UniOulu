@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.talhamobilecomputing.ui.login.LoginScreen
 import com.example.talhamobilecomputing.ui.theme.TalhaMobileComputingTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +20,7 @@ class MainActivity : ComponentActivity() {
             TalhaMobileComputingTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+                    LoginScreen(modifier = Modifier.fillMaxSize())
                 }
             }
         }
