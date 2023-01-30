@@ -4,18 +4,27 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -29,6 +38,15 @@ fun LoginScreen(
 ){
     val username = remember { mutableStateOf(value = "") }
     val password = remember { mutableStateOf(value = "") }
+
+    Box(modifier = Modifier.fillMaxSize()){
+        Image(
+            painter = painterResource(id = R.drawable.login),
+            contentDescription = "background",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+    }
 
     /* Sign-Up TextField */
     Box(modifier = Modifier.fillMaxSize()) {
@@ -52,11 +70,7 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.login),
-//            contentDescription = "login_image",
-//
-//        )
+
         Text(text = "Welcome", style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive))
 
         /* Username TextField */
@@ -64,7 +78,10 @@ fun LoginScreen(
         TextField(
             value = username.value,
             onValueChange = { text -> username.value = text},
-            label = { Text(text = "Username") }
+            label = { Text(text = "Username") },
+            placeholder =  { Text(text = "Enter your email")},
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next ),
+            leadingIcon = { Icon(Icons.Default.Email, contentDescription = "Email")}
         )
 
         /* Password TextField */
@@ -73,7 +90,9 @@ fun LoginScreen(
             value = password.value,
             onValueChange = { pwdString -> password.value = pwdString},
             label = { Text(text = "Password") },
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
+            placeholder =  { Text(text = "Enter your password")},
+            leadingIcon = {Icon(Icons.Default.Lock, contentDescription = "Password")}
         )
 
         /* Login Button */
