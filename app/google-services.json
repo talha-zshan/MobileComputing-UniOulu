@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "766909825521",
+    "project_id": "mobilecomputing-oulu",
+    "storage_bucket": "mobilecomputing-oulu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:766909825521:android:fe2614938687cb1dbb8450",
+        "android_client_info": {
+          "package_name": "com.example.talhamobilecomputing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "766909825521-o0dpujt6u66jv0ld83rcobvdjjgtrpbb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiz-FDRwfvLVDiy42xiFTusSHVdwAb2JE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "766909825521-o0dpujt6u66jv0ld83rcobvdjjgtrpbb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

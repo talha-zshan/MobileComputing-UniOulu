@@ -1,6 +1,9 @@
 package com.example.talhamobilecomputing.ui.login
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -12,13 +15,11 @@ import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -29,15 +30,38 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.talhamobilecomputing.R
 import com.example.talhamobilecomputing.ui.theme.Purple700
+import com.example.talhamobilecomputing.viewmodel.AuthViewModel
+import com.example.talhamobilecomputing.viewmodel.UserLoginStatus
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier
+    authViewModel: AuthViewModel = viewModel()
 ){
     val username = remember { mutableStateOf(value = "") }
     val password = remember { mutableStateOf(value = "") }
+    var isPasswordHidden by remember { mutableStateOf(true) }
+    val loginStatus = authViewModel.userLoginStatus.collectAsState()
+    val localContext = LocalContext.current
+    var showFailedDialog = remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = loginStatus.value){
+        when(loginStatus.value){
+            is UserLoginStatus.Failure -> {
+                localContext.showToast("Unable to Login")
+                showFailedDialog.value = true
+            }
+            UserLoginStatus.Successful -> {
+                localContext.showToast("Login Successful")
+            }
+            null -> {
+
+            }
+        }
+    }
+
 
     Box(modifier = Modifier.fillMaxSize()){
         Image(
@@ -99,7 +123,22 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(20.dp))
         Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)){
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    when {
+                        username.value.isBlank() -> {
+                            localContext.showToast(msg = "Enter your username")
+                        }
+
+                        password.value.isBlank() -> {
+                            localContext.showToast(msg = "Enter your username")
+                        }
+
+                        else -> {
+                            authViewModel.loginToApp(username.value, password.value)
+                        }
+                    }
+                          authViewModel.loginToApp(username.value, password.value)
+                },
                 shape = RoundedCornerShape(50.dp),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -121,4 +160,9 @@ fun LoginScreen(
         )
 
     }
+
+}
+
+private fun Context.showToast(msg: String){
+    Toast.makeText( this, msg, Toast.LENGTH_SHORT).show()
 }
