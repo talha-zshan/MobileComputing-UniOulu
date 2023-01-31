@@ -3,7 +3,6 @@ package com.example.talhamobilecomputing.ui.login
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -31,6 +30,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.talhamobilecomputing.R
 import com.example.talhamobilecomputing.ui.theme.Purple700
 import com.example.talhamobilecomputing.viewmodel.AuthViewModel
@@ -38,7 +38,8 @@ import com.example.talhamobilecomputing.viewmodel.UserLoginStatus
 
 @Composable
 fun LoginScreen(
-    authViewModel: AuthViewModel = viewModel()
+    authViewModel: AuthViewModel = viewModel(),
+    navController: NavController
 ){
     val username = remember { mutableStateOf(value = "") }
     val password = remember { mutableStateOf(value = "") }
@@ -55,6 +56,7 @@ fun LoginScreen(
             }
             UserLoginStatus.Successful -> {
                 localContext.showToast("Login Successful")
+                navController.navigate("home")
             }
             null -> {
 
@@ -137,7 +139,6 @@ fun LoginScreen(
                             authViewModel.loginToApp(username.value, password.value)
                         }
                     }
-                          authViewModel.loginToApp(username.value, password.value)
                 },
                 shape = RoundedCornerShape(50.dp),
                 modifier = Modifier
