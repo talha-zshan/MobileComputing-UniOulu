@@ -10,7 +10,10 @@ import kotlinx.coroutines.flow.asStateFlow
 class AuthViewModel: ViewModel() {
 
     private val _userLoginStatus = MutableStateFlow<UserLoginStatus?>(null)
+    private val _userSignUpStatus = MutableStateFlow<UserSignUpStatus?>(null)
+
     val userLoginStatus = _userLoginStatus.asStateFlow()
+    val userSignUpStatus = _userSignUpStatus.asStateFlow()
 
     private val firebaseAuth = FirebaseAuth.getInstance()
 
@@ -34,10 +37,10 @@ class AuthViewModel: ViewModel() {
         FirebaseAuthRepo.signUp(
             firebaseAuth, username, password,
             onSuccess = {
-                _userLoginStatus.value = UserLoginStatus.Successful
+                _userSignUpStatus.value = UserSignUpStatus.Successful
             },
             onFailure = {
-                _userLoginStatus.value = UserLoginStatus.Failure(it)
+                _userSignUpStatus.value = UserSignUpStatus.Failure(it)
             }
         )
     }
@@ -46,4 +49,9 @@ class AuthViewModel: ViewModel() {
 sealed class  UserLoginStatus {
     object Successful: UserLoginStatus()
     class Failure(val exception: Exception?): UserLoginStatus()
+}
+
+sealed class  UserSignUpStatus {
+    object Successful: UserSignUpStatus()
+    class Failure(val exception: Exception?): UserSignUpStatus()
 }

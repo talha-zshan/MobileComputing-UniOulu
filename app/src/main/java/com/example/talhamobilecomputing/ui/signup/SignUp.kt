@@ -1,10 +1,10 @@
-package com.example.talhamobilecomputing.ui.login
+package com.example.talhamobilecomputing.ui.signup
+
 
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
@@ -17,28 +17,27 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.talhamobilecomputing.ui.theme.Purple700
 import com.example.talhamobilecomputing.viewmodel.AuthViewModel
 import com.example.talhamobilecomputing.viewmodel.UserLoginStatus
 
 @Composable
-fun LoginScreen(
+fun SignUpScreen(
     authViewModel: AuthViewModel = viewModel(),
     navController: NavController
 ){
     val username = remember { mutableStateOf(value = "") }
     val password = remember { mutableStateOf(value = "") }
+    val confirmPassword = remember { mutableStateOf(value = "") }
+
     var isPasswordHidden by remember { mutableStateOf(true) }
     val loginStatus = authViewModel.userLoginStatus.collectAsState()
     val localContext = LocalContext.current
@@ -47,15 +46,14 @@ fun LoginScreen(
     LaunchedEffect(key1 = loginStatus.value){
         when(loginStatus.value){
             is UserLoginStatus.Failure -> {
-                localContext.showToast("Unable to Login")
+                localContext.showToast("Unable to Register")
                 showFailedDialog.value = true
             }
             UserLoginStatus.Successful -> {
-                localContext.showToast("Login Successful")
+                localContext.showToast("Registration Successful")
                 navController.navigate("home")
             }
             null -> {
-
             }
         }
     }
@@ -70,35 +68,19 @@ fun LoginScreen(
 //        )
 //    }
 
-    /* Sign-Up TextField */
-    Box(modifier = Modifier.fillMaxSize()) {
-        ClickableText(
-            text = AnnotatedString("Don't have an account? Sign up here"),
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(20.dp),
-            onClick = { navController.navigate("signup") },
-            style = TextStyle(
-                fontSize = 14.sp,
-                fontFamily = FontFamily.Default,
-                textDecoration = TextDecoration.Underline,
-                color = Purple700
-            )
-        )
-    }
-
     Column(
         modifier = Modifier.padding(20.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Text(text = "Welcome", style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive))
+        Text(text = "Register", style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive))
 
         /* Username TextField */
         Spacer(modifier = Modifier.height(20.dp))
         TextField(
             value = username.value,
+            shape = RoundedCornerShape(50.dp),
             onValueChange = { text -> username.value = text},
             label = { Text(text = "Username") },
             placeholder =  { Text(text = "Enter your email")},
@@ -110,10 +92,23 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(20.dp))
         TextField(
             value = password.value,
+            shape = RoundedCornerShape(50.dp),
             onValueChange = { pwdString -> password.value = pwdString},
             label = { Text(text = "Password") },
             visualTransformation = PasswordVisualTransformation(),
             placeholder =  { Text(text = "Enter your password")},
+            leadingIcon = {Icon(Icons.Default.Lock, contentDescription = "Password")}
+        )
+
+        /* Confirm Password TextField */
+        Spacer(modifier = Modifier.height(20.dp))
+        TextField(
+            value = confirmPassword.value,
+            shape = RoundedCornerShape(50.dp),
+            onValueChange = { pwdString -> confirmPassword.value = pwdString},
+            label = { Text(text = "Confirm Password") },
+            visualTransformation = PasswordVisualTransformation(),
+            placeholder =  { Text(text = "Confirm Password")},
             leadingIcon = {Icon(Icons.Default.Lock, contentDescription = "Password")}
         )
 
@@ -128,10 +123,15 @@ fun LoginScreen(
                         }
 
                         password.value.isBlank() -> {
-                            localContext.showToast(msg = "Enter your username")
+                            localContext.showToast(msg = "Enter your password")
+                        }
+
+                        confirmPassword.value.isBlank() -> {
+                            localContext.showToast(msg = "re-enter your password")
                         }
 
                         else -> {
+                            authViewModel.createNewUser(username.value, password.value)
                             authViewModel.loginToApp(username.value, password.value)
                         }
                     }
@@ -144,17 +144,6 @@ fun LoginScreen(
                 Text(text = "Login")
             }
         }
-
-        /* Forgot Password TextField */
-        Spacer(modifier = Modifier.height(20.dp))
-        ClickableText(
-            text = AnnotatedString("Forgot Password?"),
-            onClick = { },
-            style = TextStyle(
-                fontSize = 14.sp,
-                fontFamily = FontFamily.Default
-            )
-        )
 
     }
 
