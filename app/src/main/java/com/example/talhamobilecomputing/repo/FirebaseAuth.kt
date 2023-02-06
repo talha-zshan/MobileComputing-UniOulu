@@ -22,6 +22,12 @@ object FirebaseAuthRepo {
             }
     }
 
+    fun logout(
+        firebaseAuth: FirebaseAuth
+    ){
+        firebaseAuth.signOut()
+    }
+
     fun signUp(
         firebaseAuth: FirebaseAuth,
         username: String,

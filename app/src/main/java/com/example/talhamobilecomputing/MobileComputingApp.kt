@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.talhamobilecomputing.ui.home.HomeScreen
 import com.example.talhamobilecomputing.ui.login.LoginScreen
+import com.example.talhamobilecomputing.ui.profile.Profile
 import com.example.talhamobilecomputing.ui.signup.SignUpScreen
 
 @Composable
@@ -23,6 +24,9 @@ fun MobileComputingApp(
         }
         composable(route = "signup"){
             SignUpScreen(navController = appState.navController)
+        }
+        composable(route = "profile"){
+            Profile(navController = appState.navController)
         }
     }
 }

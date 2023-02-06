@@ -1,16 +1,18 @@
 package com.example.talhamobilecomputing.ui.home
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -18,14 +20,36 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.talhamobilecomputing.R
 import com.example.talhamobilecomputing.data.entity.Category
 import com.example.talhamobilecomputing.ui.home.categoryReminder.CategoryReminder
+import com.example.talhamobilecomputing.viewmodel.AuthViewModel
+import com.example.talhamobilecomputing.viewmodel.UserLoginStatus
 
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = viewModel(),
+    authViewModel: AuthViewModel = viewModel(),
     navController: NavController
 ){
     val viewState by viewModel.state.collectAsState()
     val selectedCategory = viewState.selectedCategory
+    val loginStatus = authViewModel.userLoginStatus.collectAsState()
+    val localContext = LocalContext.current
+    var showFailedDialog = remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = loginStatus.value){
+        when(loginStatus.value){
+            is UserLoginStatus.Failure -> {
+                localContext.showToast("Unable to Login")
+                showFailedDialog.value = true
+            }
+            UserLoginStatus.Successful -> {
+                localContext.showToast("Login Successful")
+                navController.navigate("home")
+            }
+            null -> {
+
+            }
+        }
+    }
 
     if(viewState.categories.isNotEmpty() && selectedCategory != null){
         Surface(modifier = Modifier.fillMaxSize()){
@@ -33,7 +57,8 @@ fun HomeScreen(
                 selectedCategory = selectedCategory,
                 categories = viewState.categories,
                 onCategorySelected = viewModel::onCategorySelected,
-                navController = navController
+                navController = navController,
+                authViewModel = authViewModel
             )
         }
     }
@@ -44,7 +69,8 @@ fun HomeContent(
     selectedCategory: Category,
     categories: List<Category>,
     onCategorySelected: (Category) -> Unit,
-    navController: NavController
+    navController: NavController,
+    authViewModel: AuthViewModel
 ) {
     Scaffold(
         modifier = Modifier.padding(bottom = 24.dp),
@@ -69,7 +95,9 @@ fun HomeContent(
             val appBarColor = MaterialTheme.colors.surface.copy(alpha = 0.87f)
 
             HomeAppBar(
-                backgroundColor = appBarColor
+                backgroundColor = appBarColor,
+                authViewModel = authViewModel,
+                navController = navController
             )
 
             CategoryTabs(
@@ -87,7 +115,9 @@ fun HomeContent(
 
 @Composable
 private fun HomeAppBar(
-    backgroundColor: Color
+    backgroundColor: Color,
+    authViewModel: AuthViewModel,
+    navController: NavController
 ){
     TopAppBar(
         title = {
@@ -101,10 +131,15 @@ private fun HomeAppBar(
         },
         backgroundColor = backgroundColor,
         actions = {
-            IconButton(onClick = {}) {
-                Icon(imageVector = Icons.Filled.Search , contentDescription = stringResource(R.string.search) )
+            IconButton(onClick = {
+                authViewModel.logOut()
+                navController.navigate("login")
+            }) {
+                Icon(imageVector = Icons.Filled.ExitToApp , contentDescription = stringResource(R.string.search) )
             }
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                navController.navigate("profile")
+            }) {
                 Icon(imageVector = Icons.Filled.AccountCircle , contentDescription = stringResource(R.string.account) )
             }
         }
@@ -168,3 +203,6 @@ private fun ChoiceChipFormat(
 }
 
 private val emptyTabIndicator: @Composable (List<TabPosition>) -> Unit = {}
+private fun Context.showToast(msg: String){
+    Toast.makeText( this, msg, Toast.LENGTH_SHORT).show()
+}

@@ -33,6 +33,10 @@ class AuthViewModel: ViewModel() {
         )
     }
 
+    fun logOut(){
+        FirebaseAuthRepo.logout(firebaseAuth)
+    }
+
     fun createNewUser(username: String, password: String){
         FirebaseAuthRepo.signUp(
             firebaseAuth, username, password,
